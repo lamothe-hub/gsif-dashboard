@@ -1,10 +1,18 @@
 <section>
 <script src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
-  <div class="page-header">
+  <div class="page-header" ng-init = "portfolioValue()">
     <h1>Volatilities</h1>
-
   </div>
-  <button ng-click="getSummary()"> Test </button>
+  <div>
+  	<input type="text" name="Tickers" ng-model ="ticker">
+  	<input type="number" name="Shares" ng-model = "shares">
+  	<button ng-click = "add_portfolio_components()">Add to portfolio</button>
+  </div>
+  <div>
+  	 <button ng-click="portfolioValue()"> Portfolio Value </button>
+  <button ng-click = "cumulatedReturns(portfolio_Value)"> Cummulated Return</button>
+  </div>
+ 
   <div class="list-group" data-ng-init = "config()"> 
    <canvas id="myChart" width="400" height="400"></canvas>
   </div>

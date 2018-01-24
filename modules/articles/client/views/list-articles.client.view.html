@@ -2,17 +2,13 @@
   <div class="page-header">
     <h1>Articles</h1>
   </div>
-  <div class="list-group">
-    <a ng-repeat="article in vm.articles" ui-sref="articles.view({ articleId: article._id })" class="list-group-item">
-      <small class="list-group-item-text">
-        Posted on
-        <span ng-bind="article.created | date:'mediumDate'"></span>
-        by
-        <span ng-if="article.user" ng-bind="article.user.displayName"></span>
-        <span ng-if="!article.user">Deleted User</span>
-      </small>
-      <h4 class="list-group-item-heading" ng-bind="article.title"></h4>
-      <p class="list-group-item-text" ng-bind="article.content"></p>
-    </a>
+<div>
+    <input type="text" name="Tickers" ng-model ="ticker">
+    <input type="number" name="Shares" ng-model = "shares">
+    <button ng-click = "add_portfolio_components()">Add to portfolio</button>
+  </div>
+  <div>
+     <button ng-click="portfolioValue()"> Portfolio Value </button>
+  <button ng-click = "cumulatedReturns(portfolio_Value)"> Cummulated Return</button>
   </div>
 </section>

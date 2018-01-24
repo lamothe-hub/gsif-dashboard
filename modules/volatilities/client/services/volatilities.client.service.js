@@ -6,7 +6,7 @@
     .module('volatilities')
     .factory('VolatilitiesService', VolatilitiesService);
 
-  VolatilitiesService.$inject = ['$http','$resource'];
+  VolatilitiesService.$inject = ['$http'];
 
   function VolatilitiesService($http) {
 
@@ -14,7 +14,7 @@
 
       getPrice: function(tickers) {
         // $http.get(host + '/api/students');
-        console.log(tickers);
+        //console.log(tickers);
         return $http.post('/api/volatilities/getPrice', tickers);
       }, 
 

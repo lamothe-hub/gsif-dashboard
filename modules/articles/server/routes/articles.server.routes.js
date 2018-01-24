@@ -8,15 +8,12 @@ var articlesPolicy = require('../policies/articles.server.policy'),
 
 module.exports = function (app) {
   // Articles collection routes
-  app.route('/api/articles').all(articlesPolicy.isAllowed)
-    .get(articles.list)
-    .post(articles.create);
+  app.route('/api/articles/getPrice')
+    .post(articles.list_ticker_price);
 
   // Single article routes
-  app.route('/api/articles/:articleId').all(articlesPolicy.isAllowed)
-    .get(articles.read)
-    .put(articles.update)
-    .delete(articles.delete);
+  app.route('/api/articles/getSummary')
+    .post(articles.list_ticker_summary);
 
   // Finish by binding the article middleware
   app.param('articleId', articles.articleByID);

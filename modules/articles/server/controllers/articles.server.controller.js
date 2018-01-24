@@ -6,90 +6,60 @@
 var path = require('path'),
   mongoose = require('mongoose'),
   Article = mongoose.model('Article'),
+   request = require('request'),
+  yahooFin = require('yahoo-finance'),
+  math = require('mathjs'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
-/**
- * Create an article
- */
-exports.create = function (req, res) {
-  var article = new Article(req.body);
-  article.user = req.user;
+/*
+Getting historical Data
+*/
 
-  article.save(function (err) {
-    if (err) {
-      return res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.json(article);
-    }
+//global.hisPrice = [];
+exports.list_ticker_price = function(req, res) {
+var tickers = req.body;
+
+  yahooFin.historical({
+    symbol: tickers.ticker,
+    from: tickers.start,
+    to: tickers.end,
+    period: tickers.period
+  }).then(function(quotes){
+    console.log("Fetching " + quotes[0].symbol + " historial prices ...");
+    var quote = {
+      'name': quotes[0].symbol,
+      'price': quotes
+    };
+   res.json(quote);
+    //global.hisPrice.push(quote);
   });
+
+
+  global.hisPrice = [];
 };
 
-/**
- * Show the current article
- */
-exports.read = function (req, res) {
-  // convert mongoose document to JSON
-  var article = req.article ? req.article.toJSON() : {};
+/*
+Grabbing results
+*/
 
-  // Add a custom field to the Article, for determining if the current User is the "owner".
-  // NOTE: This field is NOT persisted to the database, since it doesn't exist in the Article model.
-  article.isCurrentUserOwner = !!(req.user && article.user && article.user._id.toString() === req.user._id.toString());
+global.summaryResult =[]; 
+exports.list_ticker_summary = function(req, res){
+var ticker = req.body;
 
-  res.json(article);
-};
 
-/**
- * Update an article
- */
-exports.update = function (req, res) {
-  var article = req.article;
+for(var i = 0; i < ticker.ticker.length; i ++){
+  yahooFin.quote({  
+    symbol: ticker.ticker[i],
+    modules: ticker.modules
+  }).then(function(quote){
+    //console.log(quote);
+    global.summaryResult.push(quote);
+  }); 
+}
 
-  article.title = req.body.title;
-  article.content = req.body.content;
+res.json(global.summaryResult);
+global.summaryResult = [];
 
-  article.save(function (err) {
-    if (err) {
-      return res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.json(article);
-    }
-  });
-};
-
-/**
- * Delete an article
- */
-exports.delete = function (req, res) {
-  var article = req.article;
-
-  article.remove(function (err) {
-    if (err) {
-      return res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.json(article);
-    }
-  });
-};
-
-/**
- * List of Articles
- */
-exports.list = function (req, res) {
-  Article.find().sort('-created').populate('user', 'displayName').exec(function (err, articles) {
-    if (err) {
-      return res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.json(articles);
-    }
-  });
 };
 
 /**

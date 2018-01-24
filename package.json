@@ -39,6 +39,7 @@
   "dependencies": {
     "acl": "^0.4.11",
     "amazon-s3-uri": "0.0.3",
+    "angular-chart.js": "^1.1.1",
     "async": "~2.5.0",
     "aws-sdk": "^2.123.0",
     "body-parser": "^1.18.2",
@@ -79,6 +80,7 @@
     "jasmine-core": "~2.7.0",
     "lodash": "~4.17.4",
     "lusca": "~1.5.1",
+    "mathjs": "^3.20.1",
     "method-override": "~2.3.8",
     "mongoose": "^4.13.3",
     "morgan": "~1.8.1",
