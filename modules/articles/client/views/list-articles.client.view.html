@@ -1,14 +1,37 @@
 <section>
   <div class="page-header">
-    <h1>Articles</h1>
+    <div>
+      <h1>Portfolio</h1>
+    </div>
   </div>
-<div>
-    <input type="text" name="Tickers" ng-model ="ticker">
-    <input type="number" name="Shares" ng-model = "shares">
-    <button ng-click = "add_portfolio_components()">Add to portfolio</button>
-  </div>
-  <div>
-     <button ng-click="portfolioValue()"> Portfolio Value </button>
-  <button ng-click = "cumulatedReturns(portfolio_Value)"> Cummulated Return</button>
+    <div class="container">
+      <div class="col-sm-4">
+      <form>
+         Tickers:<br><input type="text" name="Tickers" ng-model ="ticker"> <br>
+          Shares:<br><input type="number" name="Shares" ng-model = "shares"> 
+      </form>
+      <p>
+          <form>  
+          Start Date: <br><input type="text" name="startDate" ng-model = "startDate"> <br>
+           End Date: <br><input type="text" name="endDate" ng-model ="endDate">
+          </form>
+      </p>
+      <p>
+          <button class="btn" ng-click = "add_portfolio_components()">Add to portfolio</button>
+      </p>
+      <p>
+          <button class="btn" ng-click="portfolioValue()"> Portfolio Value </button>
+          <button class="btn" ng-click = "cumulatedReturns(portfolio_Value)"> Cummulated Return</button>
+      </p>
+    </div>
+     <div class="col-sm-8">
+       <canvas id="myChart"></canvas>
+     </div>
   </div>
 </section>
+<section>
+  
+</section>
+
+
+
