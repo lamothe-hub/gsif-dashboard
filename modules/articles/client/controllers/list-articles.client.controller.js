@@ -25,7 +25,7 @@ $scope.myChart = new Chart(ctx, {
   data: {
     labels: [],
     datasets: [{
-      label: 'Portfolio Value',
+      label: '',
       data: [],
       backgroundColor: "rgba(153,255,51,0.4)"
     },{
@@ -41,7 +41,7 @@ $scope.myChart = new Chart(ctx, {
       borderColor: 'black',
        borderDash: [10,10]
     },{
-      label: 'Realized volatility 2 std lo-bound',
+      label: 'Realized volatility 2 std up-bound',
       fill: false,
       data: [],
       borderColor: 'red',
@@ -71,6 +71,7 @@ $scope.myChart = new Chart(ctx, {
     $scope.prices = [];
     $scope.myChart.data.labels=[];
     $scope.myChart.data.datasets[0].data=[];
+     $scope.myChart.data.datasets[0].label = 'Portfolio Value';
     console.log("1");
     $rootScope.$broadcast('clear');
 //Getting the prices from the service
@@ -138,11 +139,14 @@ $scope.$on('priceLoadComplete', function(){
 		      	console.log('Pushing');
 		      	$scope.myChart.update();
 		      }
+		      
 		     
 		    });
+
     $scope.cumulatedReturns = function(portfolio){
       var returns = [];
       var realizedVol = [];
+      $scope.myChart.data.datasets[0].label = 'Cummulative Returns';
        $scope.myChart.data.labels=[];
       $scope.myChart.data.datasets[0].data=[];
       $scope.myChart.data.datasets[1].data=[];
@@ -175,7 +179,8 @@ $scope.$on('priceLoadComplete', function(){
       	console.log('Pushing');
       	$scope.myChart.update();
       }
-      console.log(returns);
+       
+       console.log(returns);
     }
  
 
