@@ -15,27 +15,36 @@ var path = require('path'),
 Getting historical Data
 */
 
-//global.hisPrice = [];
+global.hisPrice = [];
 exports.list_ticker_price = function(req, res) {
 var tickers = req.body;
+var i =0;
 
   yahooFin.historical({
-    symbol: tickers.ticker,
-    from: tickers.start,
-    to: tickers.end,
-    period: tickers.period
-  }).then(function(quotes){
-    console.log("Fetching " + quotes[0].symbol + " historial prices ...");
-    var quote = {
-      'name': quotes[0].symbol,
-      'price': quotes
-    };
-   res.json(quote);
-    //global.hisPrice.push(quote);
-  });
+      symbols: tickers.ticker,
+      from: tickers.start,
+      to: tickers.end,
+      period: tickers.period
+    }).then(function(quotes){
+      console.log(quotes);
+      //console.log("Fetching " + quotes[0].symbol + " historial prices ...");
+      for(var stuff in quotes){
+        console.log(quotes[stuff]);
+        var quote = {
+        'name': stuff,
+        'price': quotes[stuff]
+      };
+      global.hisPrice.push(quote); 
+      
+      } 
+      console.log(global.hisPrice);  
+      res.json(global.hisPrice);
+      global.hisPrice = [];
+    });
+  
 
 
-  global.hisPrice = [];
+
 };
 
 /*

@@ -54,22 +54,26 @@ $scope.myChart = new Chart(ctx, {
     }
 
 $scope.$on('clear', function(){
+			//for(var key of $scope.portfolio.keys()){
+				var ticker = [];
 			for(var key of $scope.portfolio.keys()){
+				ticker.push(key);
+			}
 		      var tickers = {
-		          'ticker': key,
+		          'ticker': ticker,
 		        'start': $scope.startDate,//'2016-01-01',
 		        'end':  $scope.endDate, //'2018-01-01',
 		        'period': 'd'
 		      };
-		      
+		      console.log(tickers);
 		      ArticlesService.getPrice(tickers)
 		      .then(function(response){
 		        console.log(response);
-		        $scope.prices.push(response.data);$rootScope.$broadcast('priceLoadComplete');
+		        $scope.prices = response.data;$rootScope.$broadcast('priceLoadComplete');
 		      }, function(error){
 		        console.log(error);
 		      });
-		    }
+		   // }
 		     console.log("2");
 		     console.log($scope.prices);
 		    
@@ -77,7 +81,7 @@ $scope.$on('clear', function(){
 		});  
 
 $scope.$on('priceLoadComplete', function(){
-		    	 console.log($scope.prices);
+		    	 console.log($scope.prices[0]);
 
 		       $scope.portfolio_Value = [];
 		        console.log("3");
