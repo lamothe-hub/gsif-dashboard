@@ -39,6 +39,7 @@
   "dependencies": {
     "acl": "^0.4.11",
     "amazon-s3-uri": "0.0.3",
+    "angular": "^1.6.9",
     "angular-chart.js": "^1.1.1",
     "async": "~2.5.0",
     "aws-sdk": "^2.123.0",
@@ -78,7 +79,7 @@
     "helmet": "~3.8.1",
     "imagemin-pngquant": "~5.0.0",
     "jasmine-core": "~2.7.0",
-    "lodash": "~4.17.4",
+    "lodash": "^4.17.5",
     "lusca": "~1.5.1",
     "mathjs": "^3.20.1",
     "method-override": "~2.3.8",

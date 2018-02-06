@@ -25,34 +25,35 @@ $scope.myChart = new Chart(ctx, {
   data: {
     labels: [],
     datasets: [{
-      label: '',
-      data: [],
-      backgroundColor: "rgba(153,255,51,0.4)"
-    },{
       label: 'Realized volatility 1 std up-bound',
       fill: false,
       data: [],
-      borderColor: 'black',
+      borderColor: '#F79502',
        borderDash: [10,10]
     },{
       label: 'Realized volatility 1 std lo-bound',
       fill: false,
       data: [],
-      borderColor: 'black',
+      borderColor: '#F79502',
        borderDash: [10,10]
     },{
       label: 'Realized volatility 2 std up-bound',
       fill: false,
       data: [],
-      borderColor: 'red',
+      borderColor: '#FE1F0B',
        borderDash: [10,10]
     },{
       label: 'Realized volatility 2 std lo-bound',
       fill: false,
       data: [],
-      borderColor: 'red',
+      borderColor: '#FE1F0B',
        borderDash: [10,10]
-    },]
+    },{
+      label: '',
+      data: [],
+      backgroundColor: '#395ea8'
+     // fillOpacity: .3,
+    }]
   }
 });
 
@@ -70,8 +71,8 @@ $scope.myChart = new Chart(ctx, {
     	//clear stuff
     $scope.prices = [];
     $scope.myChart.data.labels=[];
-    $scope.myChart.data.datasets[0].data=[];
-     $scope.myChart.data.datasets[0].label = 'Portfolio Value';
+    $scope.myChart.data.datasets[4].data=[];
+     $scope.myChart.data.datasets[4].label = 'Portfolio Value';
     console.log("1");
     $rootScope.$broadcast('clear');
 //Getting the prices from the service
@@ -135,7 +136,7 @@ $scope.$on('priceLoadComplete', function(){
 
 		      for(var i = $scope.portfolio_Value.length-1; i >=0; i--){
 		      	$scope.myChart.data.labels.push( $scope.portfolio_Value[i].date);
-		      	$scope.myChart.data.datasets[0].data.push( $scope.portfolio_Value[i].value);
+		      	$scope.myChart.data.datasets[4].data.push( $scope.portfolio_Value[i].value);
 		      	console.log('Pushing');
 		      	$scope.myChart.update();
 		      }
@@ -146,13 +147,13 @@ $scope.$on('priceLoadComplete', function(){
     $scope.cumulatedReturns = function(portfolio){
       var returns = [];
       var realizedVol = [];
-      $scope.myChart.data.datasets[0].label = 'Cummulative Returns';
+      $scope.myChart.data.datasets[4].label = 'Cummulative Returns';
        $scope.myChart.data.labels=[];
+      $scope.myChart.data.datasets[4].data=[];
       $scope.myChart.data.datasets[0].data=[];
       $scope.myChart.data.datasets[1].data=[];
       $scope.myChart.data.datasets[2].data=[];
       $scope.myChart.data.datasets[3].data=[];
-      $scope.myChart.data.datasets[4].data=[];
       for(var item of portfolio){
         var portfolio_return = {
           'date': item.date,
@@ -171,11 +172,11 @@ $scope.$on('priceLoadComplete', function(){
 
       for(var i = returns.length-1; i >=0; i--){
       	$scope.myChart.data.labels.push( returns[i].date);
-      	$scope.myChart.data.datasets[0].data.push( returns[i].return);
-      	$scope.myChart.data.datasets[1].data.push(realizedVol[i]);
-      	$scope.myChart.data.datasets[2].data.push(-1*realizedVol[i]);
-      	$scope.myChart.data.datasets[3].data.push(2*realizedVol[i]);
-      	$scope.myChart.data.datasets[4].data.push(-2*realizedVol[i]);
+      	$scope.myChart.data.datasets[4].data.push( returns[i].return);
+      	$scope.myChart.data.datasets[0].data.push(realizedVol[i]);
+      	$scope.myChart.data.datasets[1].data.push(-1*realizedVol[i]);
+      	$scope.myChart.data.datasets[2].data.push(2*realizedVol[i]);
+      	$scope.myChart.data.datasets[3].data.push(-2*realizedVol[i]);
       	console.log('Pushing');
       	$scope.myChart.update();
       }
