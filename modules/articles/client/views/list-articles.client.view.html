@@ -5,29 +5,42 @@
     </div>
   </div>
     <div class="container">
+      <div class="container">
       <div class="col-sm-4">
-      <form>
+         <form>
          Tickers:<br><input type="text" name="Tickers" ng-model ="ticker"> <br>
           Shares:<br><input type="number" name="Shares" ng-model = "shares"> 
       </form>
-      <p>
-          <form>  
+     
+      </div>
+      <div class="col-sm-4">
+        <form>  
           Start Date: <br><input type="text" name="startDate" ng-model = "startDate"> <br>
            End Date: <br><input type="text" name="endDate" ng-model ="endDate">
-          </form>
-      </p>
-      <p>
-      Implied Vol: <br><input type="number" name="impliedVol" ng-model ="impliedVol">
-      </p>
-      <p>
-          <button class="btn" ng-click = "add_portfolio_components()">Add to portfolio</button>
-      </p>
-      <p>
-          <button class="btn" ng-click="portfolioValue()"> Portfolio Value </button>
-          <button class="btn" ng-click = "cumulatedReturns(portfolio_Value)"> Cummulated Return</button>
-      </p>
+        </form>
+      </div>
+      <div class="col-sm-4">
+      <form>
+        Implied Vol: <br><input type="number" name="impliedVol" ng-model ="impliedVol"> 
+      </form>
+      </div>
     </div>
-     <div class="col-sm-8">
+<p>
+   <div class= "container">
+         <div class="col-sm-4"> 
+            <button type ="button" class="btn btn-default" ng-click = "add_portfolio_components()">Add to portfolio</button>
+        </div>
+         <div class="col-sm-4">
+             <button type ="button" class="btn btn-default" ng-click="portfolioValue()"> Portfolio Value </button>
+         </div>
+         <div class="col-sm-4">
+             <button type ="button" class="btn btn-default" ng-click = "cumulatedReturns(portfolio_Value)"> Cummulated Return</button>
+         </div>
+    </div>
+</p>
+   
+
+     <div class="w3-container">
        <canvas id="myChart"></canvas>
      </div>
   </div>
