@@ -39,19 +39,23 @@
     </div>
 </p>
    
-
-     <div class="w3-container">
+<p>
+    <div class="w3-container">
      <div class="col-sm-2">
-      <div ng-repeat = "key in portfolio.keys()" >
-          Name: {{key}}
-           
-      </div>
+     <h2>Holdings</h2>
+      <ul class="list-group" ng-repeat = "item in port_stack">
+        <li class="list-group-item">
+          <p> Name: {{item.name}} </p>
+          <p> Shares: {{item.shares}}</p>
+        </li>
+      </ul>
      </div>
      <div class ="col-sm-10">
         <canvas id="myChart"></canvas>
-     </div>
-      
-     </div>
+     </div>  
+    </div>
+</p>
+         
   </div>
 </section>
 <section>

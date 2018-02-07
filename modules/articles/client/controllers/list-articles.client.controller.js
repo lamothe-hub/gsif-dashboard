@@ -16,6 +16,7 @@
     $scope.endDate = null; // End date for data 
     $scope.impliedVol = null; 
     $scope.portfolio = new Map(); //Portfolio info with tickers and weights
+    $scope.port_stack = [];
 
 //Chart Stuff------------------------------------------
 
@@ -62,6 +63,10 @@ $scope.myChart = new Chart(ctx, {
     if($scope.ticker!= null & $scope.shares != null){
     	$scope.portfolio.set($scope.ticker, $scope.shares);
     }      
+    var obj = {'name': $scope.ticker,
+    'shares': $scope.shares};
+     $scope.port_stack.push(obj);
+     console.log($scope.port_stack);
       $scope.ticker = null;
       $scope.shares = null;
       console.log($scope.portfolio.keys());
