@@ -64,7 +64,7 @@ $scope.myChart = new Chart(ctx, {
     }      
       $scope.ticker = null;
       $scope.shares = null;
-      console.log($scope.portfolio);
+      console.log($scope.portfolio.keys());
     }
 
     $scope.portfolioValue = function(){
@@ -120,7 +120,7 @@ $scope.$on('priceLoadComplete', function(){
 		        $scope.portfolio_Value.push(value_obj);
 		      }
 
-		      //For each portfolio holding, claculate the value of the portfolio using grabbed prices 
+		      //For each portfolio holding, calaculate the value of the portfolio using grabbed prices 
 		      for(var key of $scope.portfolio.keys()){
 		        var hisPrice = $scope.prices.find(function(element){
 		          return element.name == key;
