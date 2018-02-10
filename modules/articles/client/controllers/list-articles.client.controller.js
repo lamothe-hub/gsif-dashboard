@@ -52,7 +52,13 @@ $scope.myChart = new Chart(ctx, {
     },{
       label: '',
       data: [],
-      backgroundColor: '#395ea8'
+      backgroundColor: 'rgba(41,120,193,0.3)'
+      /*fillColor: 'rgba(220,100,220,0.3)',
+      strokeColor: 'rgba(220,100, 220, 1)',
+      pointColor: 'rgba(50, 220, 220, 1)',
+      pointStrokeColor: '#fff',
+      pointHighlightFill: '#fff',
+      pointHighlightStroke: 'rgba(220, 220, 220, 1)'*/
      // fillOpacity: .3,
     }]
   }
@@ -119,7 +125,7 @@ $scope.$on('priceLoadComplete', function(){
 		        console.log("3");
 		      for(var element of $scope.prices[0].price){
 		        var value_obj = {
-		          'date': element.date,
+		          'date': element.date.substring(0,10),
 		          'value': 0
 		        };
 		        $scope.portfolio_Value.push(value_obj);

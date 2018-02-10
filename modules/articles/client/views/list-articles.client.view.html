@@ -43,12 +43,15 @@
     <div class="w3-container">
      <div class="col-sm-2">
      <h2>Holdings</h2>
-      <ul class="list-group" ng-repeat = "item in port_stack">
+     <div overflow = "scroll" height= "500px" width = "100px">   
+     <ul class="list-group" ng-repeat = "item in port_stack">
         <li class="list-group-item">
           <p> Name: {{item.name}} </p>
           <p> Shares: {{item.shares}}</p>
         </li>
       </ul>
+      </div>
+   
      </div>
      <div class ="col-sm-10">
         <canvas id="myChart"></canvas>
