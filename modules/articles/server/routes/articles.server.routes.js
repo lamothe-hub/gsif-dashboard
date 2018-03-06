@@ -15,6 +15,12 @@ module.exports = function (app) {
   app.route('/api/articles/getSummary')
     .post(articles.list_ticker_summary);
 
+  app.route('/api/articles/createManager')
+  	.post(articles.create);
+
+  app.route('/api/articles/impliedVols')
+  	.post(articles.covariance);
+
   // Finish by binding the article middleware
-  app.param('articleId', articles.articleByID);
+  //app.param('articleId', articles.articleByID);
 };

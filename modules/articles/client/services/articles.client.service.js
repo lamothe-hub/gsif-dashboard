@@ -18,6 +18,14 @@
 
       getSummary: function(tickers){
         return $http.post('/api/articles/getSummary', tickers);
+      },
+
+      createManager: function(manager){
+        return $http.post('/api/articles/createManager', manager);
+      },
+
+      getImpliedVols: function(tickers){
+        return $http.post('/api/articles/impliedVols', tickers);
       }
 
     };

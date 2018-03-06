@@ -4,7 +4,7 @@
  * Module dependencies
  */
 var mongoose = require('mongoose'),
-  Schema = mongoose.Schema；
+  Schema = mongoose.Schema;
 
 /**
  * Article Schema
@@ -14,9 +14,7 @@ var ManagerSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  portfolio: {
-    type: Map
-  },
+  portfolio: [],
   user: {
     type: Schema.ObjectId,
     ref: 'User'

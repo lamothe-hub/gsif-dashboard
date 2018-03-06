@@ -53,13 +53,6 @@ $scope.myChart = new Chart(ctx, {
       label: '',
       data: [],
       backgroundColor: 'rgba(41,120,193,0.3)'
-      /*fillColor: 'rgba(220,100,220,0.3)',
-      strokeColor: 'rgba(220,100, 220, 1)',
-      pointColor: 'rgba(50, 220, 220, 1)',
-      pointStrokeColor: '#fff',
-      pointHighlightFill: '#fff',
-      pointHighlightStroke: 'rgba(220, 220, 220, 1)'*/
-     // fillOpacity: .3,
     }]
   }
 });
@@ -78,17 +71,32 @@ $scope.myChart = new Chart(ctx, {
       console.log($scope.portfolio.keys());
     }
 
+    $scope.covariance = function(){
+      var time = {
+        'start': $scope.startDate,//'2016-01-01',
+          'end':  $scope.endDate, //'2018-01-01',
+       'period': 'd'
+      };
+
+      $scope.port_stack.push(time);
+      
+      ArticlesService.getImpliedVols($scope.port_stack)
+      .then(function(response){
+        console.log(response);
+      }, function(error){
+        console.log(error);
+      });
+    }
+
     $scope.portfolioValue = function(){
     	//clear stuff
     $scope.prices = [];
     $scope.myChart.data.labels=[];
     $scope.myChart.data.datasets[4].data=[];
-     $scope.myChart.data.datasets[4].label = 'Portfolio Value';
+    $scope.myChart.data.datasets[4].label = 'Portfolio Value';
     console.log("1");
     $rootScope.$broadcast('clear');
-//Getting the prices from the service
-		 
- 
+//Ready to get the prices from the service
     }
 
 $scope.$on('clear', function(){
@@ -106,8 +114,10 @@ $scope.$on('clear', function(){
 		      console.log(tickers);
 		      ArticlesService.getPrice(tickers)
 		      .then(function(response){
+            //$scope.covariance();
 		        console.log(response);
-		        $scope.prices = response.data;$rootScope.$broadcast('priceLoadComplete');
+		        $scope.prices = response.data;
+            $rootScope.$broadcast('priceLoadComplete');
 		      }, function(error){
 		        console.log(error);
 		      });
