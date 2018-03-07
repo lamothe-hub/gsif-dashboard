@@ -95,8 +95,22 @@ function correlation(x, y){
     return answer;
 };
 
+
 //We need historical returns first! 
 exports.covariance = function(req, res){
+
+  console.log(req.body);
+
+var responsePackage = {
+  'variance': null,
+  'covariance': null,
+  'individual_data': null,
+  'weights':null
+};
+
+var portfolioWeights = req.body;
+
+var portfolioReturns =[];
 
   if(global.hisPrice.length == 0){
     console.log("Error need historical returns first");
@@ -105,34 +119,77 @@ exports.covariance = function(req, res){
   'Content-Type': 'text/plain' });
     return;
   }
-var portfolioReturns =[];
-  for(var holding of global.hisPrice){
-    //console.log(holding);
-    var returnVec = [];
-    for(var i =0; i < holding.price.length-1; i++){
-      returnVec.push((holding.price[i].adjClose/holding.price[i+1].adjClose)-1);
-    }
-    //console.log(returnVec);
-    var componentReturn = {
-      'name': holding.name,
-      'returns': returnVec,
-      'implied_vol': null
-    };
 
-request('https://www.quandl.com/api/v3/datasets/VOL/'+holding.name+'.json?column_index=25&start_date='+global.end+'&end_date='+global.end+'&api_key=ZcDqZyg9kM9oVVuHFA1p',
-    function(error, response, body){
-      if(!error && response.statusCode == 200){
-        console.log(body);
-        var content = JSON.parse(body);
-        componentReturn.implied_vol = content.dataset.data[0][1];
-        portfolioReturns.push(componentReturn);
-      }
-    }); 
-  }
-  console.log(portfolioReturns);
+global.hisPrice.forEach(function(holding, index){
 
-  //console.log(correlation(portfolioReturns[0].returns, portfolioReturns[1].returns));
+        request('https://www.quandl.com/api/v3/datasets/VOL/'+holding.name+'.json?column_index=25&start_date='+global.end+'&end_date='+global.end+'&api_key=ZcDqZyg9kM9oVVuHFA1p',
+            function(error, response, body){
 
+            var returnVec = [];
+            for(var i =0; i < holding.price.length-1; i++){
+              returnVec.push((holding.price[i].adjClose/holding.price[i+1].adjClose)-1);
+            }
+            
+              if(!error && response.statusCode == 200){
+                console.log(body);
+                var content = JSON.parse(body);
+                //componentReturn.implied_vol = content.dataset.data[0][1];
+                var componentReturn = {
+                  'name': holding.name,
+                  'returns': returnVec,
+                  'latestClose': holding.price[0].adjClose,
+                  'implied_vol': content.dataset.data[0][1]
+                };
+
+                portfolioReturns.push(componentReturn);
+
+                //For Synchronization purposes
+                if(portfolioReturns.length-1 === global.hisPrice.length-1){
+                  //console.log(portfolioReturns);
+                  var portfolioValue = 0;
+                  var weights = [];
+                  //Calculate total portfolio value
+                  for(var component of portfolioReturns){
+                    var componentWeight = component.latestClose*portfolioWeights.find(function(item){
+                      if(item.name === component.name){return item;}
+                    }).shares;
+                   // console.log(componentWeight);
+                    //console.log(component.latestClose);
+                    weights.push(componentWeight);
+                    portfolioValue += componentWeight;
+                  }
+                  //console.log(portfolioValue);
+                
+
+                 weights.forEach(function(weight,index){
+                  //console.log(weight);
+                  weights[index] = weight/portfolioValue;
+                 });
+                 //console.log(weights);
+                  var weightVector = math.matrix(weights);
+                  var covMatrix = []; 
+                  for(var component1 of portfolioReturns){
+                    var row = [];
+                    for(var component2 of portfolioReturns){
+                      row.push(correlation(component1.returns, component2.returns)*component1.implied_vol*component2.implied_vol);
+                    }
+                    covMatrix.push(row);
+                  }
+                  var cov = math.matrix(covMatrix);
+                  //console.log(cov.valueOf());
+                  var variance = math.multiply(math.multiply(weightVector, cov), math.transpose(weightVector));
+                 // console.log(variance);
+                  responsePackage.variance= variance;
+                  responsePackage.covariance = covMatrix;
+                  responsePackage.individual_data = portfolioReturns;
+                  responsePackage.weights = weights;
+                  res.json(responsePackage);
+                }
+                
+              }
+            }); 
+           
+      });
 
 };
 

@@ -81,8 +81,10 @@ $scope.myChart = new Chart(ctx, {
       $scope.port_stack.push(time);
       
       ArticlesService.getImpliedVols($scope.port_stack)
-      .then(function(response){
-        console.log(response);
+      .then(function(res){
+        console.log(res);
+        $scope.impliedVol = Math.sqrt(res.data.variance);
+        console.log($scope.impliedVol);
       }, function(error){
         console.log(error);
       });
@@ -94,7 +96,6 @@ $scope.myChart = new Chart(ctx, {
     $scope.myChart.data.labels=[];
     $scope.myChart.data.datasets[4].data=[];
     $scope.myChart.data.datasets[4].label = 'Portfolio Value';
-    console.log("1");
     $rootScope.$broadcast('clear');
 //Ready to get the prices from the service
     }
