@@ -131,8 +131,12 @@ global.hisPrice.forEach(function(holding, index){
             }
             
               if(!error && response.statusCode == 200){
+
                 console.log(body);
                 var content = JSON.parse(body);
+                if(content.dataset.data.length === 0){
+                  res.json("No Data avaliable, try different date");
+                }
                 //componentReturn.implied_vol = content.dataset.data[0][1];
                 var componentReturn = {
                   'name': holding.name,
