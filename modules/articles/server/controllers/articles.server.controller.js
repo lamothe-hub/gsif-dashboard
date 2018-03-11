@@ -15,13 +15,14 @@ var path = require('path'),
 Getting historical Data
 */
 global.hisPrice = [];
+global.benchHisPrice = [];
 global.start = null;
 global.end = null; 
 
 exports.list_ticker_price = function(req, res) {
   var tickers = req.body;
-  var i =0;
   global.hisPrice = [];
+  global.benchHisPrice = [];
   global.start = tickers.start;
   global.end = tickers.end;
 
@@ -31,10 +32,9 @@ exports.list_ticker_price = function(req, res) {
       to: tickers.end,
       period: tickers.period
     }).then(function(quotes){
-      //console.log(quotes);
-      //console.log("Fetching " + quotes[0].symbol + " historial prices ...");
+
       for(var stuff in quotes){
-        //console.log(quotes[stuff]);
+        
         var quote = {
         'name': stuff,
         'price': quotes[stuff]
@@ -42,10 +42,44 @@ exports.list_ticker_price = function(req, res) {
       global.hisPrice.push(quote); 
       
       } 
-      //console.log(global.hisPrice);  
-      res.json(global.hisPrice);
-      //global.hisPrice = [];
+      
+      
+    }).then(function(){
+        if(tickers.benchComp.length !=0){
+
+        yahooFin.historical({
+          symbols: tickers.benchComp,
+          from: tickers.start,
+          to: tickers.end,
+          period: tickers.period
+        }).then(function(quotes){
+          
+          for(var stuff in quotes){
+            
+            var quote = {
+            'name': stuff,
+            'price': quotes[stuff]
+          };
+          global.benchHisPrice.push(quote); 
+          
+          } 
+       
+        });
+      }
+
+    }).then(function(){
+
+      var retPackage = {
+              'active': global.hisPrice,
+              'benchmark': global.benchHisPrice
+            };
+            res.json(retPackage);
+      
     });
+
+  
+
+  
 };
 
 function correlation(x, y){
@@ -101,6 +135,7 @@ exports.covariance = function(req, res){
 
   console.log(req.body);
 
+//What we send back to the front end
 var responsePackage = {
   'variance': null,
   'covariance': null,

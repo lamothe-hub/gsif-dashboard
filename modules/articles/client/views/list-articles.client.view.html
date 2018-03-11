@@ -38,19 +38,27 @@
          </div>
     </div>
 </p>
-    <button type ="button" class="btn btn-default" ng-click = "covariance()"> Test</button>
 <p>
     <div class="w3-container">
      <div class="col-sm-2">
      <h2>Holdings</h2>
-     <div overflow = "scroll" height= "500px" width = "100px">   
+     <div overflow = "scroll" height= "600px" width = "200px">   
      <ul class="list-group" ng-repeat = "item in port_stack">
         <li class="list-group-item">
           <p> Name: {{item.name}} </p>
           <p> Shares: {{item.shares}}</p>
         </li>
       </ul>
-      </div>
+    </div>
+    <h2>Benchmark</h2>
+     <div overflow = "scroll" height= "500px" width = "200px">   
+     <ul class="list-group" ng-repeat = "item in port_stack">
+        <li class="list-group-item">
+          <p> Name: {{item.name}} </p>
+          <p> Shares: {{item.shares}}</p>
+        </li>
+      </ul>
+    </div>
    
      </div>
      <div class ="col-sm-10">

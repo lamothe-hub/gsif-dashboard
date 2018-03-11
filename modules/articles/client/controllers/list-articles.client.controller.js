@@ -16,7 +16,11 @@
     $scope.endDate = null; // End date for data 
     $scope.impliedVol = null; 
     $scope.portfolio = new Map(); //Portfolio info with tickers and weights
+    $scope.benchmark = new Map(); //benchmark info with ticker (weights if plural)
+    $scope.benchComp = null;
+    $scope.benchCompWeight = null;
     $scope.port_stack = [];
+    $scope.bench_stack = [];
 
 //Chart Stuff------------------------------------------
 
@@ -71,19 +75,32 @@ $scope.myChart = new Chart(ctx, {
       console.log($scope.portfolio.keys());
     }
 
-    $scope.covariance = function(){
+    $scope.add_benchmark_componnts = function () {
+      // body...
+      if($scope.benchComp != null){
+        $scope.benchmark.set($scope.benchComp, $scope.benchCompWeight);
+      }
+      var obj = {'name': $scope.benchComp,
+      'shares': $scope.benchCompWeight};
+      $scope.bench_stack.push(obj);
+      $scope.benchComp = null;
+      $scope.benchCompWeight = null; 
+    }
+
+  function covariance(){
       var time = {
         'start': $scope.startDate,//'2016-01-01',
           'end':  $scope.endDate, //'2018-01-01',
        'period': 'd'
       };
 
-      $scope.port_stack.push(time);
+      $scope.port_stack.push(time); // pass in time element 
       
       ArticlesService.getImpliedVols($scope.port_stack)
       .then(function(res){
         console.log(res);
         $scope.impliedVol = Math.sqrt(res.data.variance);
+        $scope.port_stack.splice($scope.port_stack.length-1, 1); //delete time element
         console.log($scope.impliedVol);
       }, function(error){
         console.log(error);
@@ -103,11 +120,17 @@ $scope.myChart = new Chart(ctx, {
 $scope.$on('clear', function(){
 			//for(var key of $scope.portfolio.keys()){
 				var ticker = [];
+        var benchComp = [];
 			for(var key of $scope.portfolio.keys()){
 				ticker.push(key);
 			}
+      for(var key of $scope.benchmark.keys()){
+        benchComp.push(key);
+      }
+
 		      var tickers = {
 		          'ticker': ticker,
+              'benchComp': benchComp,
 		        'start': $scope.startDate,//'2016-01-01',
 		        'end':  $scope.endDate, //'2018-01-01',
 		        'period': 'd'
@@ -117,7 +140,7 @@ $scope.$on('clear', function(){
 		      .then(function(response){
             //$scope.covariance();
 		        console.log(response);
-		        $scope.prices = response.data;
+		        $scope.prices = response.data.active;
             $rootScope.$broadcast('priceLoadComplete');
 		      }, function(error){
 		        console.log(error);
@@ -162,9 +185,8 @@ $scope.$on('priceLoadComplete', function(){
 		      	console.log('Pushing');
 		      	$scope.myChart.update();
 		      }
-		      
-		     
-		    });
+		        covariance();
+		  });
 
     $scope.cumulatedReturns = function(portfolio){
       var returns = [];
