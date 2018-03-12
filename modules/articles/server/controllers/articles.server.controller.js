@@ -45,36 +45,47 @@ exports.list_ticker_price = function(req, res) {
       
       
     }).then(function(){
-        if(tickers.benchComp.length !=0){
 
-        yahooFin.historical({
+
+        if(tickers.benchComp.length ===0){
+             var retPackage = {
+              'active': global.hisPrice,
+              'benchmark': global.benchHisPrice
+            };
+
+             res.json(retPackage);
+        }else{
+          yahooFin.historical({
           symbols: tickers.benchComp,
           from: tickers.start,
           to: tickers.end,
           period: tickers.period
         }).then(function(quotes){
           
+          
           for(var stuff in quotes){
-            
+
             var quote = {
             'name': stuff,
             'price': quotes[stuff]
           };
+          console.log(quote);
           global.benchHisPrice.push(quote); 
           
-          } 
+          }
        
-        });
-      }
-
-    }).then(function(){
-
-      var retPackage = {
+        }).then(function(){
+           var retPackage = {
               'active': global.hisPrice,
               'benchmark': global.benchHisPrice
             };
-            res.json(retPackage);
-      
+
+             res.json(retPackage);
+        });
+
+        }
+        
+        
     });
 
   
@@ -157,7 +168,7 @@ var portfolioReturns =[];
 
 global.hisPrice.forEach(function(holding, index){
 
-        request('https://www.quandl.com/api/v3/datasets/VOL/'+holding.name+'.json?column_index=25&start_date='+global.end+'&end_date='+global.end+'&api_key=ZcDqZyg9kM9oVVuHFA1p',
+        request('https://www.quandl.com/api/v3/datasets/VOL/'+holding.name+'.json?column_index=25&start_date='+global.start+'&end_date='+global.start+'&api_key=ZcDqZyg9kM9oVVuHFA1p',
             function(error, response, body){
 
             var returnVec = [];
@@ -167,7 +178,7 @@ global.hisPrice.forEach(function(holding, index){
             
               if(!error && response.statusCode == 200){
 
-                console.log(body);
+                //console.log(body);
                 var content = JSON.parse(body);
                 if(content.dataset.data.length === 0){
                   res.json("No Data avaliable, try different date");

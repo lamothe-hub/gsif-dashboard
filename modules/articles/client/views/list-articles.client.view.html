@@ -6,34 +6,49 @@
   </div>
     <div class="container">
       <div class="container">
-      <div class="col-sm-4">
+
+      <div class="col-sm-3">
          <form>
          Tickers:<br><input type="text" name="Tickers" ng-model ="ticker"> <br>
           Shares:<br><input type="number" name="Shares" ng-model = "shares"> 
       </form>
-     
       </div>
-      <div class="col-sm-4">
+
+      <div class="col-sm-3">
+      <form>
+        Benchmark: <br><input type="text" name="becnhmark" ng-model ="benchComp">  <br>
+        Weight: <br><input type="text" name="weight" ng-model ="benchCompWeight"> 
+      </form>
+      </div>
+
+      <div class="col-sm-3">
         <form>  
           Start Date: <br><input type="text" name="startDate" ng-model = "startDate"> <br>
            End Date: <br><input type="text" name="endDate" ng-model ="endDate">
         </form>
       </div>
-      <div class="col-sm-4">
+
+      <div class="col-sm-3">
       <form>
         Implied Vol: <br><input type="number" name="impliedVol" ng-model ="impliedVol"> 
       </form>
       </div>
+
+   
+
     </div>
 <p>
    <div class= "container">
-         <div class="col-sm-4"> 
+         <div class="col-sm-3"> 
             <button type ="button" class="btn btn-default" ng-click = "add_portfolio_components()">Add to portfolio</button>
         </div>
-         <div class="col-sm-4">
+        <div class="col-sm-3"> 
+            <button type ="button" class="btn btn-default" ng-click = "add_benchmark_components()">Add to benchmark</button>
+        </div>
+         <div class="col-sm-3">
              <button type ="button" class="btn btn-default" ng-click="portfolioValue()"> Portfolio Value </button>
          </div>
-         <div class="col-sm-4">
+         <div class="col-sm-3">
              <button type ="button" class="btn btn-default" ng-click = "cumulatedReturns(portfolio_Value)"> Cummulated Return</button>
          </div>
     </div>
@@ -52,10 +67,10 @@
     </div>
     <h2>Benchmark</h2>
      <div overflow = "scroll" height= "500px" width = "200px">   
-     <ul class="list-group" ng-repeat = "item in port_stack">
+     <ul class="list-group" ng-repeat = "item in bench_stack">
         <li class="list-group-item">
           <p> Name: {{item.name}} </p>
-          <p> Shares: {{item.shares}}</p>
+          <p> Weight: {{item.weight}}</p>
         </li>
       </ul>
     </div>

@@ -9,6 +9,7 @@
 
   function ArticlesListController(ArticlesService, $scope, $rootScope) {
     $scope.prices = []; //Prices of individual securities 
+    $scope.benchPrice = []; //Price of benchmark 
     $scope.portfolio_Value = []; //historical value of the portfolio 
     $scope.ticker = null; //User input ticker
     $scope.shares = null; //User input weight
@@ -75,13 +76,13 @@ $scope.myChart = new Chart(ctx, {
       console.log($scope.portfolio.keys());
     }
 
-    $scope.add_benchmark_componnts = function () {
+    $scope.add_benchmark_components = function () {
       // body...
       if($scope.benchComp != null){
         $scope.benchmark.set($scope.benchComp, $scope.benchCompWeight);
       }
       var obj = {'name': $scope.benchComp,
-      'shares': $scope.benchCompWeight};
+      'weight': $scope.benchCompWeight};
       $scope.bench_stack.push(obj);
       $scope.benchComp = null;
       $scope.benchCompWeight = null; 
@@ -141,6 +142,7 @@ $scope.$on('clear', function(){
             //$scope.covariance();
 		        console.log(response);
 		        $scope.prices = response.data.active;
+            $scope.benchPrice = response.data.benchmark;
             $rootScope.$broadcast('priceLoadComplete');
 		      }, function(error){
 		        console.log(error);
@@ -207,12 +209,40 @@ $scope.$on('priceLoadComplete', function(){
         realizedVol.push(0);
       }
 
+      console.log(returns);
+
       var counter = 1; 
       for(var i = portfolio.length-2; i >=0 ; i--){
         returns[i].return = (portfolio[i].value/portfolio[i+1].value)-1 + returns[i+1].return; 
+        console.log(returns[i].return);
         realizedVol[i] = ($scope.impliedVol)*Math.sqrt(counter)/Math.sqrt(252);
-        counter++;
+        counter++; 
       }
+
+      if($scope.benchPrice.length != 0 && counter === portfolio.length){
+          console.log("Here!!!!");
+          for(var item of $scope.benchPrice){
+            var cummulativeBench = 0;
+            for(var i =0; i <= item.price.length -2; i ++){
+              cummulativeBench = cummulativeBench + ((item.price[i].close/item.price[i+1].close)-1)*$scope.benchmark.get(item.name)*(-1);
+              returns[i].return = cummulativeBench + returns[i].return;
+            }
+          }
+        }
+
+      console.log(counter);
+      console.log(portfolio.length);
+
+       console.log(returns);
+
+     /* if($scope.benchPrice.length != 0){
+        for(var item of $scope.benchPrice){
+          for(var i =0; i <= item.price.length -2; i ++){
+            returns[i].return = (item.price[i].close/item.price[i+1])*$scope.benchmark.get(item.name)*(-1) + returns[i].return;
+          }
+        }
+      }*/
+      // console.log(returns);
 
       for(var i = returns.length-1; i >=0; i--){
       	$scope.myChart.data.labels.push( returns[i].date);
@@ -225,7 +255,7 @@ $scope.$on('priceLoadComplete', function(){
       	$scope.myChart.update();
       }
        
-       console.log(returns);
+      // console.log(returns);
     }
  
 
