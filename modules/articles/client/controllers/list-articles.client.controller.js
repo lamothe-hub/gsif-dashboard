@@ -97,7 +97,12 @@ $scope.myChart = new Chart(ctx, {
 
       $scope.port_stack.push(time); // pass in time element 
       
-      ArticlesService.getImpliedVols($scope.port_stack)
+      var reqPackage = {
+        'active': $scope.port_stack,
+        'benchmark': $scope.bench_stack
+      };
+
+      ArticlesService.getImpliedVols(reqPackage)
       .then(function(res){
         console.log(res);
         $scope.impliedVol = Math.sqrt(res.data.variance);
@@ -219,31 +224,18 @@ $scope.$on('priceLoadComplete', function(){
         counter++; 
       }
 
+      //If we have a benchmark, calculate excess return 
       if($scope.benchPrice.length != 0 && counter === portfolio.length){
-          console.log("Here!!!!");
           for(var item of $scope.benchPrice){
             var cummulativeBench = 0;
             for(var i =0; i <= item.price.length -2; i ++){
-              cummulativeBench = cummulativeBench + ((item.price[i].close/item.price[i+1].close)-1)*$scope.benchmark.get(item.name)*(-1);
+              cummulativeBench = cummulativeBench + ((item.price[i].adjClose/item.price[i+1].adjClose)-1)*$scope.benchmark.get(item.name)*(-1);
               returns[i].return = cummulativeBench + returns[i].return;
             }
           }
         }
 
-      console.log(counter);
-      console.log(portfolio.length);
-
-       console.log(returns);
-
-     /* if($scope.benchPrice.length != 0){
-        for(var item of $scope.benchPrice){
-          for(var i =0; i <= item.price.length -2; i ++){
-            returns[i].return = (item.price[i].close/item.price[i+1])*$scope.benchmark.get(item.name)*(-1) + returns[i].return;
-          }
-        }
-      }*/
-      // console.log(returns);
-
+      //Push the returns data into charts   
       for(var i = returns.length-1; i >=0; i--){
       	$scope.myChart.data.labels.push( returns[i].date);
       	$scope.myChart.data.datasets[4].data.push( returns[i].return);
@@ -255,7 +247,6 @@ $scope.$on('priceLoadComplete', function(){
       	$scope.myChart.update();
       }
        
-      // console.log(returns);
     }
  
 

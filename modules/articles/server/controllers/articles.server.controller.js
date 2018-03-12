@@ -154,7 +154,7 @@ var responsePackage = {
   'weights':null
 };
 
-var portfolioWeights = req.body;
+var portfolioWeights = req.body.active;
 
 var portfolioReturns =[];
 
@@ -164,6 +164,11 @@ var portfolioReturns =[];
   'Content-Length': Buffer.byteLength('Need historial returns first'),
   'Content-Type': 'text/plain' });
     return;
+  }
+
+//Introducing the benchmarks
+  for(var item of global.benchHisPrice){
+    global.hisPrice.push(item);
   }
 
 global.hisPrice.forEach(function(holding, index){
@@ -178,12 +183,12 @@ global.hisPrice.forEach(function(holding, index){
             
               if(!error && response.statusCode == 200){
 
-                //console.log(body);
                 var content = JSON.parse(body);
                 if(content.dataset.data.length === 0){
                   res.json("No Data avaliable, try different date");
+                  return;
                 }
-                //componentReturn.implied_vol = content.dataset.data[0][1];
+
                 var componentReturn = {
                   'name': holding.name,
                   'returns': returnVec,
@@ -195,18 +200,26 @@ global.hisPrice.forEach(function(holding, index){
 
                 //For Synchronization purposes
                 if(portfolioReturns.length-1 === global.hisPrice.length-1){
-                  //console.log(portfolioReturns);
+                  console.log(portfolioReturns);
                   var portfolioValue = 0;
                   var weights = [];
                   //Calculate total portfolio value
+                  console.log(portfolioWeights);
                   for(var component of portfolioReturns){
-                    var componentWeight = component.latestClose*portfolioWeights.find(function(item){
+
+                    var comp = portfolioWeights.find(function(item){
                       if(item.name === component.name){return item;}
-                    }).shares;
+                      return null;
+                    });
+
+                    if(comp != null){
+                       var componentWeight = component.latestClose*comp.shares;
                    // console.log(componentWeight);
                     //console.log(component.latestClose);
                     weights.push(componentWeight);
                     portfolioValue += componentWeight;
+                  }
+                   
                   }
                   //console.log(portfolioValue);
                 
@@ -215,7 +228,14 @@ global.hisPrice.forEach(function(holding, index){
                   //console.log(weight);
                   weights[index] = weight/portfolioValue;
                  });
-                 //console.log(weights);
+
+                 //Benchmark weights
+                 for(var item of req.body.benchmark){
+                  weights.push(item.weight*(-1));
+                 }
+
+                 console.log(weights);
+                 console.log(portfolioReturns);
                   var weightVector = math.matrix(weights);
                   var covMatrix = []; 
                   for(var component1 of portfolioReturns){
