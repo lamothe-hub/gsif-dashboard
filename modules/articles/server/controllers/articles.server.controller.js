@@ -37,7 +37,8 @@ exports.list_ticker_price = function(req, res) {
         
         var quote = {
         'name': stuff,
-        'price': quotes[stuff]
+        'price': quotes[stuff],
+        'bench': 0
       };
       global.hisPrice.push(quote); 
       
@@ -67,7 +68,8 @@ exports.list_ticker_price = function(req, res) {
 
             var quote = {
             'name': stuff,
-            'price': quotes[stuff]
+            'price': quotes[stuff],
+            'bench': 1
           };
           console.log(quote);
           global.benchHisPrice.push(quote); 
@@ -144,7 +146,7 @@ function correlation(x, y){
 //We need historical returns first! 
 exports.covariance = function(req, res){
 
-  console.log(req.body);
+  //console.log(req.body);
 
 //What we send back to the front end
 var responsePackage = {
@@ -167,13 +169,16 @@ var portfolioReturns =[];
   }
 
 //Introducing the benchmarks
+console.log(global.benchHisPrice);
   for(var item of global.benchHisPrice){
     global.hisPrice.push(item);
   }
+console.log("____________________________");
+console.log(global.hisPrice);
 
 global.hisPrice.forEach(function(holding, index){
 
-        request('https://www.quandl.com/api/v3/datasets/VOL/'+holding.name+'.json?column_index=25&start_date='+global.start+'&end_date='+global.start+'&api_key=ZcDqZyg9kM9oVVuHFA1p',
+        request('https://www.quandl.com/api/v3/datasets/VOL/'+holding.name+'.json?column_index=25&start_date='+global.end+'&end_date='+global.end+'&api_key=ZcDqZyg9kM9oVVuHFA1p',
             function(error, response, body){
 
             var returnVec = [];
@@ -193,27 +198,28 @@ global.hisPrice.forEach(function(holding, index){
                   'name': holding.name,
                   'returns': returnVec,
                   'latestClose': holding.price[0].adjClose,
-                  'implied_vol': content.dataset.data[0][1]
+                  'implied_vol': content.dataset.data[0][1],
+                  'bench': holding.bench
                 };
 
                 portfolioReturns.push(componentReturn);
 
                 //For Synchronization purposes
                 if(portfolioReturns.length-1 === global.hisPrice.length-1){
-                  console.log(portfolioReturns);
+                  //console.log(portfolioReturns);
                   var portfolioValue = 0;
                   var weights = [];
                   //Calculate total portfolio value
-                  console.log(portfolioWeights);
+                //  console.log(portfolioWeights);
                   for(var component of portfolioReturns){
 
-                    var comp = portfolioWeights.find(function(item){
+                     var comp = portfolioWeights.find(function(item){
                       if(item.name === component.name){return item;}
                       return null;
                     });
 
-                    if(comp != null){
-                       var componentWeight = component.latestClose*comp.shares;
+                    if(component.bench == 0){
+                    var componentWeight = component.latestClose*comp.shares;
                    // console.log(componentWeight);
                     //console.log(component.latestClose);
                     weights.push(componentWeight);
@@ -234,10 +240,12 @@ global.hisPrice.forEach(function(holding, index){
                   weights.push(item.weight*(-1));
                  }
 
-                 console.log(weights);
-                 console.log(portfolioReturns);
+               //  console.log(weights);
+               //  console.log(portfolioReturns);
                   var weightVector = math.matrix(weights);
                   var covMatrix = []; 
+
+
                   for(var component1 of portfolioReturns){
                     var row = [];
                     for(var component2 of portfolioReturns){
@@ -268,7 +276,7 @@ exports.getImpliedVols = function(req, res){
   request('https://www.quandl.com/api/v3/datasets/VOL/AAL?column_index=25&start_date=2018-03-05&end_date=2018-03-05&api_key=ZcDqZyg9kM9oVVuHFA1p',
     function(error, response, body){
       if(!error && response.statusCode == 200){
-        console.log(body);
+        //console.log(body);
         //test();
       }
     });

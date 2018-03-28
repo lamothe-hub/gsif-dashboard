@@ -1,3 +1,10 @@
+<style type="text/css">
+  #first {
+    overflow:"scroll" !important;
+    min-height:"100%" !important;
+    width:"200px" !important;
+  }
+</style>
 <section>
   <div class="page-header">
     <div>
@@ -55,9 +62,9 @@
 </p>
 <p>
     <div class="w3-container">
-     <div class="col-sm-2">
+     <div class="col-sm-2" min-height = "1000px">
      <h2>Holdings</h2>
-     <div overflow = "scroll" height= "600px" width = "200px">   
+     <div id = "first">   
      <ul class="list-group" ng-repeat = "item in port_stack">
         <li class="list-group-item">
           <p> Name: {{item.name}} </p>
@@ -66,7 +73,7 @@
       </ul>
     </div>
     <h2>Benchmark</h2>
-     <div overflow = "scroll" height= "500px" width = "200px">   
+     <div overflow = "scroll" min-height= "500px" width = "200px">   
      <ul class="list-group" ng-repeat = "item in bench_stack">
         <li class="list-group-item">
           <p> Name: {{item.name}} </p>
