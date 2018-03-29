@@ -145,9 +145,11 @@ $scope.$on('clear', function(){
 		      ArticlesService.getPrice(tickers)
 		      .then(function(response){
             //$scope.covariance();
-		        console.log(response);
+		        //console.log(response);
 		        $scope.prices = response.data.active;
             $scope.benchPrice = response.data.benchmark;
+            console.log("HERE IS SCOPE BENCHPRICE");
+            console.log($scope.benchPrice);
             $rootScope.$broadcast('priceLoadComplete');
 		      }, function(error){
 		        console.log(error);
@@ -216,9 +218,9 @@ $scope.$on('priceLoadComplete', function(){
 
       console.log(returns);
 
-      var counter = 1; 
-      for(var i = portfolio.length-2; i >=0 ; i--){
-        returns[i].return = (portfolio[i].value/portfolio[i+1].value)-1 + returns[i+1].return; 
+      var counter = 0; 
+      for(var i = portfolio.length-1; i >=0 ; i--){
+        returns[i].return = (portfolio[i].value/portfolio[portfolio.length-1].value)-1; //+ returns[i+1].return; 
         console.log(returns[i].return);
         realizedVol[i] = ($scope.impliedVol)*Math.sqrt(counter)/Math.sqrt(252);
         counter++; 
@@ -226,13 +228,24 @@ $scope.$on('priceLoadComplete', function(){
 
       //If we have a benchmark, calculate excess return 
       if($scope.benchPrice.length != 0 && counter === portfolio.length){
-          for(var item of $scope.benchPrice){
-            var cummulativeBench = 0;
-            for(var i =0; i <= item.price.length -2; i ++){
-              cummulativeBench = cummulativeBench + ((item.price[i].adjClose/item.price[i+1].adjClose)-1)*$scope.benchmark.get(item.name)*(-1);
-              returns[i].return = cummulativeBench + returns[i].return;
+       // var benchRet = [];
+          for(var i = 0; i < $scope.benchPrice[0].price.length-1; i++){
+           var base = 0; 
+           var basic = 0;
+            for(var item of $scope.benchPrice){
+            //  var cummulativeBench = 0;
+              //for(var i =0; i <= item.price.length -2; i ++){
+                //cummulativeBench = cummulativeBench + ((item.price[i].adjClose/item.price[i+1].adjClose)-1)*$scope.benchmark.get(item.name)*(-1);
+                //returns[i].return = cummulativeBench + returns[i].return;
+              //}
+              
+              basic = item.price[item.price.length-1].adjClose*$scope.benchmark.get(item.name) + basic;
+              base = item.price[i].adjClose*$scope.benchmark.get(item.name)+base;
+              console.log(base/basic -1 + " Basic: " + basic + " Base: " + base);
             }
+            returns[i].return = returns[i].return - (base/basic-1);
           }
+          
         }
 
       //Push the returns data into charts   
